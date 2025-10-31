@@ -211,10 +211,15 @@ fi
 
 d="-display none"
 if [ -n "$DAEMON" ]; then
+	# svc *must* be defined to be able to store qemu PID in a unique filename
+	if [ -z "$svc" ]; then
+		echo "${ERROR} you must provide the '-f' option when using '-d'"
+		exit 1
+	fi
 	# a TCP port is specified
 	[ -n "${serial_port}" ] && \
 		serial="-serial telnet:localhost:${serial_port},server,nowait"
-	d="$d -daemonize $serial"
+	d="$d -daemonize $serial -pidfile qemu-${svc}.pid"
 else
 	# console output
 	d="$d $consdev"
